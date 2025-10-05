@@ -19,7 +19,7 @@ export const getQuestions = (req: Request, res: Response) => {
   }
 
   const files = fs.readdirSync(questionsDir)
-  
+
   let questions = files.map(file => {
     const detailPath = path.join(questionsDir, file, "details.json")
     return JSON.parse(fs.readFileSync(detailPath, "utf-8"))
@@ -32,7 +32,12 @@ export const getQuestions = (req: Request, res: Response) => {
 
   // Filter by languade (ingles or espanhol) (if discipline equals linguagens)
   if (discipline === "linguagens" && language) {
-    questions = questions.filter(q => q.language === language)
+    // questions = questions.filter(q => q.language === language)
+    const inLanguage = questions.filter(q => q.language === language)
+    const others = questions.filter(q => q.language !== language)
+
+    // join foreign language questions with the others questions as question on enem
+    questions = [...inLanguage, ...others]
   }
 
   // Shuffle the questions if the user wants
